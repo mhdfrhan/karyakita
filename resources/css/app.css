@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    @apply antialiased scroll-smooth;
+}
+
+body {
+    @apply bg-white font-sans text-neutral-800;
+}
+
+.slider-container {
+    animation: sliderTestimonials 30s linear infinite;
+}
+
+@keyframes sliderTestimonials {
+    0% {
+        transform: translateY(3%);
+    }
+    50% {
+        transform: translateY(-30%);
+    }
+    100% {
+        transform: translateY(3%);
+    }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.ql-container {
+    @apply !rounded-t-none
+}
+
+.ql-toolbar {
+    @apply !rounded-b-none
+}
+
+.ql-editor {
+    @apply min-h-52 
+}
+
+.ql-snow {
+    @apply !border-neutral-300 rounded-xl
+}
+
+/* 
+.shadow {
+    box-shadow: rgba(60, 64, 67, 0.1) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px !important;
+} */
