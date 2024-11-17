@@ -24,6 +24,11 @@ Route::middleware('penjual')->group(function () {
     });
 });
 
+// route phpinfo
+Route::get('/phpinfo', function () {
+    phpinfo();
+}); 
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');

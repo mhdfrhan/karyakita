@@ -35,4 +35,14 @@ class Products extends Model
     {
         return $this->hasMany(OrderItems::class);
     }
+
+    public function tags()
+    {
+        return $this->hasMany(ProductTags::class);
+    }
+
+    public function features()
+    {
+        return $this->hasMany(ProductFeatures::class);
+    }
 }
