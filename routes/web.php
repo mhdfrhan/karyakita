@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
 // Route::view('/', 'welcome');
@@ -10,10 +11,12 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/semua-produk', 'semuaProduk')->name('semua-produk');
     Route::get('/semua-jasa', 'semuaJasa')->name('semua-jasa');
     Route::get('/faq', 'faq')->name('faq');
-
+    
     // toko
     Route::get('/daftar-toko', 'daftarToko')->name('daftarToko');
 });
+
+Route::post('/upload', [UploadController::class, 'uploadFile'])->name('produk.upload');
 
 // dashboard penjual
 Route::middleware('penjual')->group(function () {
