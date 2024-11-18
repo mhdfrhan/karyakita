@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
@@ -67,6 +68,8 @@ class UploadController extends Controller
 
             $disk = Storage::disk('public');
             $path = $disk->putFileAs('uploads', $file, $fileName);
+
+            Session::put('file_path', $path);
 
             // delete chunks
             if (file_exists($file->getPathName())) {

@@ -45,4 +45,9 @@ class Products extends Model
     {
         return $this->hasMany(ProductFeatures::class);
     }
+
+    public function versions()
+    {
+        return $this->hasMany(ProductVersion::class);
+    }
 }

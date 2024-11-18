@@ -21,8 +21,6 @@ return new class extends Migration
             $table->integer('pages');
             $table->decimal('old_price', 12, 2)->nullable();
             $table->decimal('price', 12, 2);
-            $table->string('file_path')->nullable();
-            $table->string('file_url')->nullable();
             $table->string('slug');
             $table->string('tags')->nullable();
             $table->enum('status', ['draft', 'published', 'suspended'])->default('draft');
