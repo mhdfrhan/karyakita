@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Categories;
+use App\Models\ServiceCategories;
+use App\Models\ServiceCategoriesType;
+use App\Models\ServiceSubCategories;
 use App\Models\Shops;
 use App\Models\SubCategories;
 use App\Models\User;
@@ -17,6 +20,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        \DB::unprepared(file_get_contents(database_path('seeders/wilayah_indonesia.sql')));
+
         User::factory()->create([
             'name' => 'farhan',
             'email' => 'farhan@gmail.com',
@@ -118,5 +123,172 @@ class DatabaseSeeder extends Seeder
             'postal_code' => '28293',
             'address' => 'Jl. Raya Pekanbaru No. 1',
         ]);
+
+        $tipeKategori = [
+            'Jarak Jauh' => [
+                'Desain Grafis & Branding' => [
+                    'Desain Logo',
+                    'Desain Poster',
+                    'Desain Baju',
+                    'Desain Arsitek Rumah',
+                    'Desain Banner/Billboard',
+                    'Desain Booth',
+                    'Desain Kemasan',
+                    'Desain Brosur/Flyer',
+                    'Desain Buku',
+                    'Desain Undangan',
+                    'Desain Ruangan',
+                    'Desain Infografis',
+                    'Desain Kalender',
+                    '3D & Perspektif',
+                    '3D Printing',
+                    '3D Animation',
+                    'Desain Lainnya',
+                ],
+                'Website & Pemrograman' => [
+                    'Website Personal',
+                    'Website Perusahaan',
+                    'Aplikasi Web',
+                    'Aplikasi Mobile',
+                    'Pemrograman Khusus',
+                    'UI/UX Design',
+                    'Manajemen Database',
+                    'Pembuatan CMS',
+                    'Pengembangan API',
+                    'Pemeliharaan Website',
+                    'Pembuatan E-Commerce',
+                    'Pembuatan Sistem Informasi',
+                    'Pengetesan Perangkat Lunak',
+                    'Website & Pemrograman Lainnya',
+                ],
+                'Video, Fotografi, & Audio' => [
+                    'Video Editing',
+                    'Motion Graphics',
+                    'Animasi 2D',
+                    'Animasi 3D',
+                    'Video Promosi',
+                    'Video Tutorial',
+                    'Pembuatan Trailer',
+                    'Video Dokumentasi',
+                    'Foto Produk',
+                    'Foto Pemandangan',
+                    'Foto Potret',
+                    'Foto Dokumentasi',
+                    'Editing Foto',
+                    'Pembuatan Musik',
+                    'Perekaman Suara',
+                    'Mixing & Mastering',
+                    'Jingle & Lagu',
+                    'Podcast Editing',
+                    'Video, Fotografi, & Audio Lainnya',
+                ],
+                'Penulisan & Karya Ilmiah' => [
+                    'Artikel',
+                    'Blog',
+                    'Cerita Pendek',
+                    'Penulisan Buku',
+                    'Esai',
+                    'Karya Ilmiah',
+                    'Laporan Penelitian',
+                    'Penulisan & Karya Ilmiah Lainnya',
+                ],
+                'Pemasaran & Periklanan' => [
+                    'Desain Iklan',
+                    'Manajemen Media Sosial',
+                    'Pemasaran Email',
+                    'Pembuatan Konten',
+                    'SEO & SEM',
+                    'Strategi Pemasaran',
+                    'Pemasaran Lainnya',
+                ],
+            ],
+            'Jarak Dekat' => [
+                'Mekanik' => [
+                    'Servis Motor',
+                    'Servis Mobil',
+                    'Perbaikan Mesin Industri',
+                    'Instalasi dan Pemeliharaan AC',
+                    'Pengelasan',
+                    'Mekanik Lainnya',
+                ],
+                'Kesehatan' => [
+                    'Pemeriksaan Kesehatan Umum',
+                    'Fisioterapi',
+                    'Pijat Tradisional',
+                    'Konsultasi Gizi',
+                    'Perawatan Lansia',
+                    'Tes Laboratorium',
+                    'Layanan Kesehatan Lainnya',
+                ],
+                'Konstruksi' => [
+                    'Pembangunan Rumah',
+                    'Renovasi Bangunan',
+                    'Instalasi Listrik',
+                    'Instalasi Pipa',
+                    'Perbaikan Atap',
+                    'Konstruksi Lainnya',
+                ],
+                'Pendidikan' => [
+                    'Les Privat',
+                    'Bimbingan Belajar',
+                    'Kursus Bahasa',
+                    'Pelatihan Komputer',
+                    'Pendidikan Lainnya',
+                ],
+                'Transportasi' => [
+                    'Jasa Pengangkutan Barang',
+                    'Sewa Kendaraan',
+                    'Jasa Pindahan',
+                    'Transportasi Lainnya',
+                ],
+                'Pekerjaan Rumah Tangga' => [
+                    'Cleaning Service',
+                    'Penyemprotan Hama',
+                    'Perbaikan Peralatan Rumah Tangga',
+                    'Pekerjaan Rumah Tangga Lainnya',
+                ],
+                'Lainnya' => [
+                    'Jasa Kurir Lokal',
+                    'Jasa Event Organizer',
+                    'Jasa Dekorasi Acara',
+                    'Layanan Lainnya',
+                ],
+            ],
+        ];
+
+        // Loop tipe kategori (Jarak Jauh dan Jarak Dekat)
+        foreach ($tipeKategori as $typeName => $categories) {
+            $type = ServiceCategoriesType::create([
+                'name' => $typeName,
+                'uuid' => Str::uuid(),
+                'slug' => Str::slug($typeName),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Loop service categories
+            foreach ($categories as $categoryName => $subcategories) {
+                $serviceCategory = ServiceCategories::create([
+                    'type_id' => $type->id,
+                    'name' => $categoryName,
+                    'uuid' => Str::uuid(),
+                    'slug' => Str::slug($categoryName),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Loop service subcategories
+                foreach ($subcategories as $subcategoryName) {
+                    ServiceSubCategories::create([
+                        'service_category_id' => $serviceCategory->id,
+                        'name' => $subcategoryName,
+                        'uuid' => Str::uuid(),
+                        'slug' => Str::slug($subcategoryName),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        }
     }
 }

@@ -16,6 +16,16 @@ class Services extends Model
         return $this->belongsTo(Shops::class);
     }
 
+    public function type()
+    {
+        return $this->belongsTo(ServiceCategoriesType::class, 'type_id');
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(ServiceOrders::class);
+    }
+
     public function category()
     {
         return $this->belongsTo(Categories::class);
@@ -34,5 +44,15 @@ class Services extends Model
     public function prices()
     {
         return $this->hasMany(ServicePrice::class);
+    }
+
+    public function steps()
+    {
+        return $this->hasMany(ServiceSteps::class);
+    }
+
+    public function servicePay()
+    {
+        return $this->hasMany(ServicePay::class);   
     }
 }

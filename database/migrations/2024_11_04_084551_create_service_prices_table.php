@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('service_prices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->foreignId('services_id')->constrained()->onDelete('cascade');
             $table->string('package_name');
             $table->text('description');
             $table->integer('duration');
             $table->integer('total_revision');
-            $table->decimal('price', 12, 2);
+            $table->integer('price');
             $table->timestamps();
         });
     }

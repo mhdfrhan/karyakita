@@ -16,6 +16,16 @@ class Products extends Model
         return $this->belongsTo(Shops::class);
     }
 
+    public function ads()
+    {
+        return $this->hasMany(Advertisements::class);
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(OrderItems::class);
+    }
+
     public function category()
     {
         return $this->belongsTo(Categories::class);
@@ -23,7 +33,7 @@ class Products extends Model
 
     public function subCategory()
     {
-        return $this->belongsTo(SubCategories::class);
+        return $this->belongsTo(SubCategories::class, 'sub_category_id');
     }
 
     public function images()

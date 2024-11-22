@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('products_id')->constrained()->onDelete('cascade');
             $table->text('reason');
             $table->enum('status', ['pending', 'reviewed', 'resolved'])->default('pending');
             $table->timestamps();

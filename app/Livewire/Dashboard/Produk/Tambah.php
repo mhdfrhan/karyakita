@@ -7,9 +7,11 @@ use App\Models\ProductFeatures;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\ProductTags;
+use App\Models\ProductVersion;
 use App\Models\SubCategories; // Pastikan untuk mengimpor model SubCategories
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -20,7 +22,7 @@ class Tambah extends Component
     use WithFileUploads;
 
     public $datakategori = [], $kategori = "", $subKategori = "", $subKategoriList = [];
-    public $nama, $qldeskripsi, $deskripsi, $halaman, $oldprice, $price, $preview;
+    public $nama, $qldeskripsi, $deskripsi, $halaman, $oldprice, $price, $preview, $version;
     public $features = [];
     public $images = [];
     public $tags = [];
@@ -31,6 +33,7 @@ class Tambah extends Component
     public $uploadProgress = 0;
     public $isUploading = false;
     public $temporaryPath = null;
+    public $uploadFile = false;
 
     protected $rules = [
         'kategori' => 'required',
@@ -45,7 +48,8 @@ class Tambah extends Component
         'price' => 'required|numeric',
         'preview' => 'nullable',
         'tags' => 'array|max:5',
-        'productFile' => 'required|file|mimes:zip,rar,7z|max:512000' // max 500MB
+        'tags.*' => 'required|min:3|max:10',
+        'version' => 'required|numeric',
     ];
 
     protected $messages = [
@@ -67,12 +71,28 @@ class Tambah extends Component
         'tags.max' => 'Maksimal 5 tag yang diperbolehkan.',
         'productFile.required' => 'File produk harus diunggah.',
         'productFile.max' => 'Ukuran file produk maksimal :max KB.',
+        'version.required' => 'Versi produk harus diisi.',
+        'version.numeric' => 'Versi produk harus berupa angka.',
     ];
 
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
+
+        $isFilled = !empty($this->kategori)
+            && !empty($this->subKategori)
+            && !empty($this->nama)
+            && !empty($this->deskripsi)
+            && !empty($this->halaman)
+            && !empty($this->oldprice)
+            && !empty($this->price)
+            && !empty($this->tags)
+            && !empty($this->features)
+            && !empty($this->images);
+
+        $this->uploadFile = $isFilled;
     }
+
 
     public function updatedKategori()
     {
@@ -154,26 +174,6 @@ class Tambah extends Component
         }
     }
 
-    public function formatSize($size)
-    {
-        if ($size >= 1048576) {
-            return round($size / 1048576, 2) . ' MB';
-        } elseif ($size >= 1024) {
-            return round($size / 1024, 2) . ' KB';
-        } else {
-            return $size . ' B';
-        }
-    }
-
-    protected function validateImage($uploadedFile)
-    {
-        if (!$uploadedFile->isValid() || !in_array($uploadedFile->getMimeType(), ['image/jpeg', 'image/png', 'image/gif'])) {
-            $this->dispatch('notify', message: 'File harus berupa gambar valid.', type: 'error');
-            return false;
-        }
-        return true;
-    }
-
     public function removeFeature($index)
     {
         if (count($this->features) > 0) {
@@ -182,11 +182,30 @@ class Tambah extends Component
         }
     }
 
+    public function formatSize($size)
+    {
+        if ($size == 0) {
+            return 'File tidak ditemukan';
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $power = floor(log($size, 1024));
+        return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+    }
+
+    public function removeImage($index)
+    {
+        unset($this->images[$index]);
+        $this->images = array_values($this->images);
+        if (count($this->images) == 0) {
+            $this->images = [
+                ['file' => null, 'preview' => null]
+            ];
+        }
+    }
+
     public function submit()
     {
-        // dd(auth()->user()->shops->first()->id);
-        // $this->validate();
-        // dd($this->temporaryPath);
 
         try {
             DB::beginTransaction();
@@ -195,21 +214,27 @@ class Tambah extends Component
             // Generate UUID untuk produk
             $uuid = Str::uuid();
 
-            // Simpan data produk
-            $product = Products::create([
-                'uuid' => $uuid,
-                'shop_id' => auth()->user()->shops->first()->id,
-                'category_id' => Categories::where('uuid', $this->kategori)->first()->id,
-                'slug' => Str::slug($this->nama),
-                'sub_category_id' => SubCategories::where('uuid', $this->subKategori)->first()->id,
-                'name' => $this->nama,
-                'description' => $this->deskripsi,
-                'preview_url' => $this->preview,
-                'pages' => $this->halaman,
-                'old_price' => $this->oldprice,
-                'price' => $this->price,
-                'status' => 'published'
-            ]);
+            try {
+                // Simpan data produk
+                $product = Products::create([
+                    'uuid' => $uuid,
+                    'shops_id' => auth()->user()->shops->first()->id,
+                    'category_id' => Categories::where('uuid', $this->kategori)->first()->id,
+                    'slug' => Str::slug($this->nama),
+                    'sub_category_id' => SubCategories::where('uuid', $this->subKategori)->first()->id,
+                    'name' => $this->nama,
+                    'description' => $this->deskripsi,
+                    'preview_url' => $this->preview,
+                    'pages' => $this->halaman,
+                    'old_price' => $this->oldprice,
+                    'price' => $this->price,
+                    'status' => 'published'
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                $this->dispatch('notify', message: 'Terjadi kesalahan saat menyimpan produk', type: 'error');
+                return;
+            }
 
             // Jika ada file yang diupload, pindahkan dari temporary ke lokasi permanen
             if ($this->temporaryPath) {
@@ -223,34 +248,64 @@ class Tambah extends Component
             // Simpan fitur produk
             foreach ($this->features as $feature) {
                 ProductFeatures::create([
-                    'product_id' => $product->id,
+                    'products_id' => $product->id,
                     'title' => $feature['title'],
                     'description' => $feature['description']
                 ]);
             }
 
-            // Simpan tag produk
+            $tagIds = [];
+
             foreach ($this->tags as $tag) {
-                ProductTags::create([
-                    'name' => $tag,
-                    'slug' => Str::slug($tag),
-                ]);
+                $normalizedTag = strtolower(trim($tag));
+
+                if (!ProductTags::where('slug', Str::slug($normalizedTag))->exists()) {
+                    $productTag = ProductTags::create([
+                        'name' => strtolower($tag),
+                        'slug' => Str::slug($normalizedTag),
+                    ]);
+
+                    $tagIds[] = $productTag->id;
+                } else {
+                    $existingTag = ProductTags::where('slug', Str::slug($normalizedTag))->first();
+                    $tagIds[] = $existingTag->id;
+                }
             }
+
+            $product->tags = implode(',', $tagIds);
+            $product->save();
 
             // Simpan gambar produk
             foreach ($this->images as $index => $image) {
                 if (isset($image['file'])) {
                     $imageName = Str::random(10) . '.' . $image['file']->getClientOriginalExtension();
-                    $path = Storage::disk('public')->putFileAs('products', $image['file'], $imageName);
+                    $path = Storage::disk('public')->putFileAs('assets/img/products', $image['file'], $imageName);
                     ProductImages::create([
-                        'product_id' => $product->id,
+                        'products_id' => $product->id,
                         'image_path' => $path,
                         'is_primary' => $index === 0
                     ]);
                 }
             }
 
+            $originalFileName = basename(Session::get('file_path'));
+            $extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+            $newName = Str::slug($this->nama) . '-' . 'v' . $this->version . '-' . md5(time()) . '.' . $extension;
+
+            $newPath = 'products/' . $newName; // Tentukan path baru secara manual
+            $moveResult = Storage::disk('public')->move(Session::get('file_path'), $newPath); // Pindahkan file
+
+            if ($moveResult) {
+                ProductVersion::create([
+                    'products_id' => $product->id,
+                    'version' => $this->version,
+                    'file_path' => $newPath, // Gunakan path baru di database
+                    'created_at' => now(),
+                ]);
+            }
+
             DB::commit();
+            Session::forget('file_path');
             session()->flash('success', 'Produk berhasil ditambahkan!');
             return redirect()->route('dashboard.produk');
         } catch (\Exception $e) {
@@ -269,94 +324,5 @@ class Tambah extends Component
             'kategoriList' => $this->datakategori,
             'subKategoriList' => $this->subKategoriList,
         ]);
-    }
-
-    public function handleFileUpload($fileInfo)
-    {
-        try {
-            $this->isUploading = true;
-
-            // Dapatkan file yang sudah diupload
-            $tempFile = $fileInfo['file'];
-            $originalName = $fileInfo['name'];
-            $fileSize = $fileInfo['size'];
-
-            // Validasi ukuran file (500MB dalam bytes)
-            $maxSize = 500 * 1024 * 1024;
-            if ($fileSize > $maxSize) {
-                throw new \Exception('Ukuran file melebihi 500MB');
-            }
-
-            // Pindahkan file ke temporary directory
-            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-            $tempPath = 'temp-uploads/' . $tempFile;
-
-            Storage::disk('public')->move($tempFile, $tempPath);
-
-            $this->temporaryPath = $tempPath;
-            $this->productFileName = $originalName;
-            $this->productFileSize = $this->formatSize($fileSize);
-
-            $this->dispatch('notify', [
-                'message' => 'File berhasil diunggah',
-                'type' => 'success'
-            ]);
-        } catch (\Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Gagal mengunggah file: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
-
-            if (isset($tempPath) && Storage::disk('public')->exists($tempPath)) {
-                Storage::disk('public')->delete($tempPath);
-            }
-        } finally {
-            $this->isUploading = false;
-        }
-    }
-
-    public function removeFile()
-    {
-        try {
-            if ($this->temporaryPath) {
-                if (!Storage::disk('public')->exists($this->temporaryPath)) {
-                    throw new \Exception('File tidak ditemukan');
-                }
-                Storage::disk('public')->delete($this->temporaryPath);
-            }
-
-            $this->reset(['productFile', 'productFileName', 'productFileSize', 'temporaryPath', 'uploadProgress']);
-        } catch (\Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Gagal menghapus file: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
-        }
-    }
-
-    public function dehydrate()
-    {
-        // Hapus file sementara jika halaman di-refresh
-        if ($this->temporaryPath) {
-            Storage::disk('public')->delete($this->temporaryPath);
-        }
-    }
-
-    protected function validateFileType($file)
-    {
-        $mimeType = $file['type'];
-        $allowedTypes = [
-            'application/zip',
-            'application/x-zip',
-            'application/x-zip-compressed',
-            'application/x-rar-compressed',
-            'application/x-7z-compressed'
-        ];
-
-        if (!in_array($mimeType, $allowedTypes)) {
-            throw new \Exception('Format file tidak didukung. Gunakan ZIP, RAR, atau 7Z');
-        }
-
-        return true;
     }
 }

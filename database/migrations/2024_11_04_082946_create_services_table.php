@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id')->constrained()->onDelete('cascade');
+            $table->foreignId('shops_id')->constrained()->onDelete('cascade');
+            $table->integer('type_id');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->string('title');
+            $table->string('slug');
             $table->text('description');
-            $table->enum('service_type', ['remote', 'local']);
             $table->string('industry')->nullable();
             $table->string('city');
             $table->string('province');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->boolean('admin_approved')->default(false);
+            $table->integer('admin_approved')->default(0);
             $table->timestamps();
         });
     }

@@ -63,11 +63,11 @@ class UploadController extends Controller
         if ($fileReceived->isFinished()) {
             $file = $fileReceived->getFile();
             $extension = $file->getClientOriginalExtension();
-            $fileName = str_replace('.' . $extension, '', $file->getClientOriginalName());
-            $fileName .= '_' . md5(time()) . '.' . $extension;
+            // $fileName = str_replace('.' . $extension, '', $file->getClientOriginalName());
+            $fileName = md5(time()) . '.' . $extension;
 
             $disk = Storage::disk('public');
-            $path = $disk->putFileAs('uploads', $file, $fileName);
+            $path = $disk->putFileAs('temp-uploads', $file, $fileName);
 
             Session::put('file_path', $path);
 
@@ -77,7 +77,7 @@ class UploadController extends Controller
             }
 
             return [
-                'path' => asset('uploads/' . $path),
+                'path' => asset('temp-uploads/' . $path),
                 'filename' => $fileName
             ];
         }

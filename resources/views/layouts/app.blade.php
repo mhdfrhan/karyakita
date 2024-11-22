@@ -23,7 +23,7 @@
         <livewire:layout.navigation />
         @include('home.partials.sidebar')
 
-        <main class="bg-neutral-100 shadow shadow-neutral-300 min-h-screen xl:ml-[18rem] rounded-3xl m-2">
+        <main class="bg-neutral-50 shadow shadow-neutral-300 min-h-screen xl:ml-[18rem] rounded-3xl m-2">
             @if (request()->routeIs('dashboard'))
                 <div class="border-b border-neutral-300 p-4 sm:px-6 flex items-center justify-between gap-3">
                     <div>
@@ -79,6 +79,9 @@
                     <nav aria-label="Breadcrumb">
                         <ol class="flex items-center space-x-4">
                             @foreach (request()->segments() as $index => $segment)
+                                @if (request()->routeIs('editJasa') && $index == count(request()->segments()) - 1)
+                                    @continue
+                                @endif
                                 <li class="text-neutral-500 flex items-center">
                                     @if ($index > 0)
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"

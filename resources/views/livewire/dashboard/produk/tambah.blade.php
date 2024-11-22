@@ -24,7 +24,7 @@
     @endpush
     <form wire:submit.prevent="submit" class="flex flex-wrap -mx-4">
         <div class="w-full lg:w-1/2 px-4">
-            <div class="p-4 md:p-6 bg-white shadow-2xl shadow-neutral-200 rounded-2xl">
+            <div class="p-4 md:p-6 bg-white shadow-xl shadow-neutral-200 rounded-2xl">
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold">Informasi Produk</h4>
                 </div>
@@ -42,6 +42,7 @@
                     <div>
                         <x-input-label class="text-neutral-500">Sub Kategori*</x-input-label>
                         <x-select-input wire:model.live='subKategori' class="!rounded-full !border-neutral-300">
+                            <option value="">Pilih Sub Kategori</option>
                             @foreach ($subKategoriList as $k)
                                 <option value="{{ $k->uuid }}">{{ $k->name }}</option>
                             @endforeach
@@ -99,8 +100,14 @@
                     </div>
                     <x-input-error :messages="$errors->get('tags')" class="mt-2 text-red-300" />
                 </div>
+                <div class="mt-6">
+                    <x-input-label class="text-neutral-500">Versi Produk*</x-input-label>
+                    <x-text-input type="number" wire:model.live='version' class="border-neutral-300 max-w-32" />
+                    <small class="text-sm text-neutral-400">Contoh: 1.0</small>
+                    <x-input-error :messages="$errors->get('version')" class="mt-2 text-red-300" />
+                </div>
             </div>
-            <div class="p-4 md:p-6 bg-white shadow-2xl shadow-neutral-200 rounded-2xl mt-6">
+            <div class="p-4 md:p-6 bg-white shadow-xl shadow-neutral-200 rounded-2xl mt-6">
                 <div>
                     <div class="mb-4">
                         <x-input-label class="text-neutral-500">Fitur Produk* (Min. 3, Maks. 5)</x-input-label>
@@ -158,158 +165,168 @@
             </div>
         </div>
         <div class="w-full lg:w-1/2 px-4">
-            <div class="p-4 md:p-6 bg-white shadow-2xl shadow-neutral-200 rounded-2xl">
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold">Gambar Produk</h4>
-                </div>
+            <div>
+                <div class="p-4 md:p-6 bg-white shadow-xl shadow-neutral-200 rounded-2xl">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold">Gambar Produk</h4>
+                    </div>
 
-                <div class="border p-3 rounded-xl mb-4">
-                    @foreach ($images as $index => $image)
-                        <div
-                            class="flex items-center justify-between gap-3 flex-wrap border-b mb-3 pb-3 last:border-b-0 last:mb-0 last:pb-0">
-                            <div class="">
-                                <h3>Gambar {{ $index + 1 }}{{ $index === 0 ? '*' : '' }}</h3>
-                                @if ($image['preview'])
-                                    <div class="flex items-center gap-3">
-                                        <img src="{{ $image['preview'] }}" alt="Preview"
-                                            class="aspect-video rounded-lg h-16">
-                                        <div>
-                                            <p>{{ $image['name'] }}</p>
-                                            <p>{{ $this->formatSize($image['size']) }}</p>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="image-upload-{{ $index }}"
-                                    wire:model="images.{{ $index }}.file"
-                                    onchange="openCropper(event, {{ $index }})" class="hidden"
-                                    accept="image/*">
-                                <div class="flex items-center gap-2">
+                    <div class="border p-3 rounded-xl mb-4">
+                        @foreach ($images as $index => $image)
+                            <div
+                                class="flex items-center justify-between gap-3 flex-wrap border-b mb-3 pb-3 last:border-b-0 last:mb-0 last:pb-0">
+                                <div class="">
+                                    <h3>Gambar {{ $index + 1 }}{{ $index === 0 ? '*' : '' }}</h3>
                                     @if ($image['preview'])
-                                        <button type="button" wire:click="removeImage({{ $index }})"
-                                            class="text-red-500 hover:text-red-600 p-1.5 bg-neutral-100 rounded-full">
-                                            <svg class="size-5" xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 256 256">
-                                                <rect width="256" height="256" fill="none" />
-                                                <line x1="216" y1="56" x2="40" y2="56"
-                                                    fill="none" stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="16" />
-                                                <line x1="104" y1="104" x2="104" y2="168"
-                                                    fill="none" stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="16" />
-                                                <line x1="152" y1="104" x2="152" y2="168"
-                                                    fill="none" stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="16" />
-                                                <path d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56" fill="none"
-                                                    stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="16" />
-                                                <path d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56"
-                                                    fill="none" stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="16" />
-                                            </svg>
-                                        </button>
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ $image['preview'] }}" alt="Preview"
+                                                class="aspect-video rounded-lg h-16">
+                                            <div>
+                                                <p>{{ $image['name'] }}</p>
+                                                <p>{{ $this->formatSize($image['size']) }}</p>
+                                            </div>
+                                        </div>
                                     @endif
+                                </div>
 
-                                    <x-border-button type="button"
-                                        onclick="document.getElementById('image-upload-{{ $index }}').click()">
-                                        {{ $image['preview'] ? 'Ubah' : 'Unggah' }}
-                                    </x-border-button>
+                                <div class="flex items-center gap-2">
+                                    <input type="file" id="image-upload-{{ $index }}"
+                                        wire:model="images.{{ $index }}.file"
+                                        onchange="openCropper(event, {{ $index }})" class="hidden"
+                                        accept="image/*">
+                                    <div class="flex items-center gap-2">
+                                        @if ($image['preview'])
+                                            <button type="button" wire:click="removeImage({{ $index }})"
+                                                class="text-red-500 hover:text-red-600 p-1.5 bg-neutral-100 rounded-full">
+                                                <svg class="size-5" xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 256 256">
+                                                    <rect width="256" height="256" fill="none" />
+                                                    <line x1="216" y1="56" x2="40"
+                                                        y2="56" fill="none" stroke="currentColor"
+                                                        stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="16" />
+                                                    <line x1="104" y1="104" x2="104"
+                                                        y2="168" fill="none" stroke="currentColor"
+                                                        stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="16" />
+                                                    <line x1="152" y1="104" x2="152"
+                                                        y2="168" fill="none" stroke="currentColor"
+                                                        stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="16" />
+                                                    <path d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56"
+                                                        fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="16" />
+                                                    <path d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56"
+                                                        fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="16" />
+                                                </svg>
+                                            </button>
+                                        @endif
+
+                                        <x-border-button type="button"
+                                            onclick="document.getElementById('image-upload-{{ $index }}').click()">
+                                            {{ $image['preview'] ? 'Ubah' : 'Unggah' }}
+                                        </x-border-button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
 
-                    @if (count($images) < 10)
-                        <div class="mt-4 text-right">
-                            <x-primary-button type="button" wire:click="addImage"
-                                class="inline-flex items-center gap-2">
-                                Tambah Gambar
-                            </x-primary-button>
+                        @if (count($images) < 10)
+                            <div class="mt-4 text-right">
+                                <x-primary-button type="button" wire:click="addImage"
+                                    class="inline-flex items-center gap-2">
+                                    Tambah Gambar
+                                </x-primary-button>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="border p-3 rounded-xl">
+                        <div class="flex items-center gap-1 text-orange-400 text-sm border-b pb-3 mb-3">
+                            <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                            </svg>
+                            <p class="tracking-wide">Ketentuan Gambar</p>
                         </div>
-                    @endif
+                        <ul class="ml-4 list-decimal text-xs text-neutral-400">
+                            <li>Unggah minimal 1 gambar terbaik yang berhubungan dengan produk yang Anda tawarkan.</li>
+                            <li>Ukuran gambar tidak boleh lebih besar dari 2MB.</li>
+                            <li>Format gambar yang diizinkan: JPEG, PNG, dan JPG.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="p-4 md:p-6 bg-white shadow-xl shadow-neutral-200 rounded-2xl mt-6">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold">Harga Produk</h4>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-full">
+                            <x-input-label class="text-neutral-500">Harga Sebelum Diskon*</x-input-label>
+                            <x-text-input type="number" wire:model.live='oldprice' class="border-neutral-300" />
+                            <x-input-error :messages="$errors->get('oldprice')" class="mt-2 text-red-300" />
+                        </div>
+                        <div class="w-full">
+                            <x-input-label class="text-neutral-500">Harga Setelah Diskon*</x-input-label>
+                            <x-text-input type="number" wire:model.live='price' class="border-neutral-300" />
+                            <x-input-error :messages="$errors->get('price')" class="mt-2 text-red-300" />
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 md:p-6 bg-white shadow-xl shadow-neutral-200 rounded-2xl mt-6">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold">Upload File Produk</h4>
+                    </div>
+                    <div>
+                        <x-input-label class="text-neutral-500">Pilih File</x-input-label>
+                        <div id="upload-area"
+                            class="flex w-full max-w-xl text-center flex-col gap-1 group rounded-xl {{ $uploadFile ? '' : 'cursor-not-allowed bg-red-200/60' }}">
+                            <div
+                                class="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed p-8">
+                                <label
+                                    class="font-medium text-neutral-700 {{ $uploadFile ? 'cursor-pointer hover:underline ' : 'cursor-not-allowed' }}">
+                                    <input type="file" class="sr-only" id="file-input" accept=".zip,.rar,.7z"
+                                        {{ $uploadFile ? '' : 'disabled' }} />
+                                    Browse
+                                </label>
+                                <span class="text-neutral-500">atau drag and drop disini</span>
+                                <small class="text-neutral-400">Zip, rar, 7z</small>
+                            </div>
+                        </div>
+                        <div id="upload-progress" class="mt-2" style="display: none;">
+                            <div class="bg-neutral-200 rounded-full h-2.5">
+                                <div id="progress-bar" class="bg-indigo-500 h-2.5 rounded-full" style="width: 0%;">
+                                </div>
+                            </div>
+                            <p id="progress-text" class="text-sm text-neutral-500 mt-1">0% Terunggah</p>
+                        </div>
+                    </div>
+                    <div class="border p-3 rounded-xl mt-4">
+                        <div class="flex items-center gap-1 text-orange-400 text-sm border-b pb-3 mb-3">
+                            <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                            </svg>
+                            <p class="tracking-wide">Ketentuan File Produk</p>
+                        </div>
+                        <ul class="ml-4 list-decimal text-xs text-neutral-400">
+                            <li>File sudah harus dikompress sebelum diunggah dalam bentuk zip.</li>
+                            <li>Ukuran file tidak boleh lebih besar dari 500MB.</li>
+                            <li>Jika ukuran lebih dari 500MB, mohon diunggah menggunakan link platform pihak ketiga
+                                (Google
+                                Drive, Mediafire, dll).</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="border p-3 rounded-xl">
-                    <div class="flex items-center gap-1 text-orange-400 text-sm border-b pb-3 mb-3">
-                        <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                        </svg>
-                        <p class="tracking-wide">Ketentuan Gambar</p>
-                    </div>
-                    <ul class="ml-4 list-decimal text-xs text-neutral-400">
-                        <li>Unggah minimal 1 gambar terbaik yang berhubungan dengan produk yang Anda tawarkan.</li>
-                        <li>Ukuran gambar tidak boleh lebih besar dari 2MB.</li>
-                        <li>Format gambar yang diizinkan: JPEG, PNG, dan JPG.</li>
-                    </ul>
+                <div class="mt-6">
+                    <x-primary-button type="submit" class="w-full">
+                        {{ __('Tambah Produk') }}
+                    </x-primary-button>
                 </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white shadow-2xl shadow-neutral-200 rounded-2xl mt-6">
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold">Harga Produk</h4>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-full">
-                        <x-input-label class="text-neutral-500">Harga Sebelum Diskon*</x-input-label>
-                        <x-text-input type="number" wire:model.live='oldprice' class="border-neutral-300" />
-                        <x-input-error :messages="$errors->get('oldprice')" class="mt-2 text-red-300" />
-                    </div>
-                    <div class="w-full">
-                        <x-input-label class="text-neutral-500">Harga Setelah Diskon*</x-input-label>
-                        <x-text-input type="number" wire:model.live='price' class="border-neutral-300" />
-                        <x-input-error :messages="$errors->get('price')" class="mt-2 text-red-300" />
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white shadow-2xl shadow-neutral-200 rounded-2xl mt-6">
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold">Upload File Produk</h4>
-                </div>
-                <div>
-                    <x-input-label class="text-neutral-500">Pilih File</x-input-label>
-                    <div id="upload-area" class="flex w-full max-w-xl text-center flex-col gap-1 group">
-                        <div
-                            class="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed p-8">
-                            <label class="cursor-pointer font-medium text-neutral-700 hover:underline">
-                                <input type="file" class="sr-only" id="file-input" accept=".zip,.rar,.7z" />
-                                Browse
-                            </label>
-                            <span class="text-neutral-500">atau drag and drop disini</span>
-                            <small class="text-neutral-400">Zip, rar, 7z</small>
-                        </div>
-                    </div>
-                    <div id="upload-progress" class="mt-2" style="display: none;">
-                        <div class="bg-neutral-200 rounded-full h-2.5">
-                            <div id="progress-bar" class="bg-indigo-500 h-2.5 rounded-full" style="width: 0%;"></div>
-                        </div>
-                        <p id="progress-text" class="text-sm text-neutral-500 mt-1">0% Terunggah</p>
-                    </div>
-                </div>
-                <div class="border p-3 rounded-xl mt-4">
-                    <div class="flex items-center gap-1 text-orange-400 text-sm border-b pb-3 mb-3">
-                        <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                        </svg>
-                        <p class="tracking-wide">Ketentuan File Produk</p>
-                    </div>
-                    <ul class="ml-4 list-decimal text-xs text-neutral-400">
-                        <li>File sudah harus dikompress sebelum diunggah dalam bentuk zip.</li>
-                        <li>Ukuran file tidak boleh lebih besar dari 500MB.</li>
-                        <li>Jika ukuran lebih dari 500MB, mohon diunggah menggunakan link platform pihak ketiga (Google
-                            Drive, Mediafire, dll).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <x-primary-button type="submit" class="w-full">
-                    {{ __('Tambah Produk') }}
-                </x-primary-button>
             </div>
         </div>
     </form>
