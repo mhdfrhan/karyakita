@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\Produk;
 
 use App\Models\Advertisements;
+use App\Models\Mutations;
 use App\Models\Products;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -107,6 +108,16 @@ class Bayar extends Component
         $this->ads->update([
             'status' => 'active',
             'snap_token' => null
+        ]);
+
+        $produk = Products::find($this->ads->products_id);
+        $mutasi = Mutations::create([
+            'user_id' => Auth::user()->id,
+            'type' => 'remove',
+            'name' => 'Pembayaran iklan produk ' . $produk->name,
+            'description' => 'Pembayaran iklan produk ' . $produk->name . ' sebesar Rp ' . number_format($this->ads->price, 0, ',', '.') . ' dengan nomor invoice ' . $this->ads->invoice_number,
+            'amount' => $this->ads->price,
+            'created_at' => now()
         ]);
 
         $this->dispatch('notify', message: 'Pembayaran iklan produk berhasil', type: 'success');

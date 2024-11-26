@@ -17,4 +17,16 @@ class DashboardController extends Controller
             'title' => 'Dashboard'
         ]);
     }
+
+    public function mutasiSaldo() {
+        return view('dashboard.saldo.mutasi', [
+            'title' => 'Mutasi Saldo'
+        ]);
+    }
+
+    public function penarikanSaldo() {
+        return view('dashboard.saldo.penarikan', [
+            'title' => 'Penarikan Saldo'
+        ]);
+    }
 }

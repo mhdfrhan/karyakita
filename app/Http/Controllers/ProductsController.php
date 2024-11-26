@@ -36,7 +36,7 @@ class ProductsController extends Controller
 
     public function bayar($slug) {
         $ads = Advertisements::where('invoice_number', $slug)->first();
-        if($ads->status == 'active' && $ads->end_date < now()) {
+        if($ads && $ads->status == 'active' && $ads->end_date < now()) {
             $ads->status = 'pending';
             $ads->save();
         }

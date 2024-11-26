@@ -96,6 +96,22 @@
                                             </span>
                                         @endif
                                     </td>
+
+                                    <td class="text-sm py-3 px-4 text-center">
+                                        @if ($p->admin_approved == 0)
+                                            <span class="text-xs py-1 px-2 bg-orange-200 rounded-full text-orange-800">
+                                                Menunggu
+                                            </span>
+                                        @elseif ($p->admin_approved == -1)
+                                            <span class="text-xs py-1 px-2 bg-red-200 rounded-full text-red-800">
+                                                Ditolak
+                                            </span>
+                                        @else
+                                            <span class="text-xs py-1 px-2 bg-green-200 rounded-full text-green-800">
+                                                Aktif
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td class="text-right py-3 px-4">
                                         <div class="flex items-center justify-end gap-2">
                                             {{-- edit --}}

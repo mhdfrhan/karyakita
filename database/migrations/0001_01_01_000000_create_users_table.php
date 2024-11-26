@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->unique();
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('phone');
@@ -24,10 +25,13 @@ return new class extends Migration
             $table->string('job_position')->nullable();
             $table->text('bio')->nullable();
             $table->string('skills')->nullable();
+            $table->integer('saldo')->default(0);
             $table->string('profile_image')->nullable();
             $table->string('cover_image')->nullable();
             $table->integer('points')->default(0);
             $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('is_admin')->default(false);
+            $table->timestamp('last_seen')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

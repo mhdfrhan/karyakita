@@ -17,11 +17,12 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->string('slug');
             $table->text('description');
             $table->integer('pages');
             $table->integer('old_price')->nullable();
             $table->integer('price');
-            $table->string('slug');
+            $table->integer('views')->default(0);
             $table->string('tags')->nullable();
             $table->enum('status', ['draft', 'published', 'suspended'])->default('draft');
             $table->string('preview_url')->nullable();

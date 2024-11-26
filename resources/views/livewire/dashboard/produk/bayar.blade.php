@@ -1,6 +1,8 @@
 <div>
-    @include('components.message')
-    @include('components.alert')
+    <div>
+        @include('components.message')
+    </div>
+
 
     <div class="flex flex-col items-center justify-center min-h-[60vh]">
         <div class="text-center mb-6">
@@ -25,6 +27,8 @@
             </x-primary-button>
         </div>
     </div>
+
+    @include('components.alert')
 
     @push('scripts')
         <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">

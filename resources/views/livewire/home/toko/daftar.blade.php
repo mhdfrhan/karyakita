@@ -16,7 +16,7 @@
                         <div>
                             <x-input-label class="text-white">URL Toko Kamu</x-input-label>
                             <div class="sm:flex items-center gap-2">
-                                <p class="text-indigo-200">{{ env('APP_URL') }}/</p>
+                                <p class="text-indigo-200">{{ env('APP_URL') }}/toko/</p>
                                 <x-text-input
                                     class="mt-1 block w-full border-indigo-400/70 focus:border-indigo-100 focus:ring-indigo-100 cursor-not-allowed bg-indigo-400/70"
                                     type="text" disabled wire:model.live='url' />

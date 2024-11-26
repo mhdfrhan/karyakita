@@ -13,7 +13,7 @@ class Products extends Model
 
     public function shop()
     {
-        return $this->belongsTo(Shops::class);
+        return $this->belongsTo(Shops::class, 'shops_id');
     }
 
     public function ads()
@@ -38,7 +38,7 @@ class Products extends Model
 
     public function images()
     {
-        return $this->hasMany(ProductImages::class);
+        return $this->hasMany(ProductImages::class, 'products_id');
     }
 
     public function orderItems()
@@ -59,5 +59,10 @@ class Products extends Model
     public function versions()
     {
         return $this->hasMany(ProductVersion::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductReviews::class);
     }
 }

@@ -39,6 +39,21 @@ class User extends Authenticatable
 
     public function bankAccounts()
     {
-        return $this->hasMany(UserBankAccounts::class);
+        return $this->belongsTo(UserBankAccounts::class, 'user_id');
+    }
+
+    public function mutations()
+    {
+        return $this->hasMany(Mutations::class, 'user_id');
+    }
+
+    public function withdrawHistories()
+    {
+        return $this->hasMany(WithdrawHistory::class, 'user_id');
+    }
+
+    public function balance()
+    {
+        return $this->hasOne(UserBalance::class, 'user_id');
     }
 }

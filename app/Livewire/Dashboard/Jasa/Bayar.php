@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Jasa;
 
+use App\Models\Mutations;
 use App\Models\Services;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -116,6 +117,15 @@ class Bayar extends Component
         $this->jasa->update([
             'status' => 'paid',
             'snap_token' => null
+        ]);
+
+        $mutasi = Mutations::create([
+            'user_id' => Auth::user()->id,
+            'type' => 'remove',
+            'name' => 'Pembayaran jasa ' . $this->jasa->title,
+            'description' => 'Pembayaran jasa' . $this->jasa->title . ' sebesar ' . number_format($this->jasa->total_amount, 0, ',', '.') . ' dengan nomor invoice ' . $this->jasa->invoice_number,
+            'amount' => $this->jasa->total_amount,
+            'created_at' => now()
         ]);
 
         $jasa->update([

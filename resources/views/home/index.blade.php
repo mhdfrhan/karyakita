@@ -10,67 +10,60 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                var karyaKita = new Splide('#karyakita-slider', {
+                function initSplide(selector, options, extensions = {}) {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        return new Splide(element, options).mount(extensions);
+                    }
+                }
+
+                const commonOptions = {
                     type: 'loop',
-                    perPage: 12,
                     perMove: 1,
                     drag: false,
                     arrows: false,
                     gap: '0',
                     pagination: false,
                     focus: 'center',
+                };
+
+                initSplide('#karyakita-slider', {
+                    ...commonOptions,
+                    perPage: 12,
                     autoScroll: {
                         speed: 0.5,
-                        pauseOnHover: false,
+                        pauseOnHover: false
                     },
-                }).mount(window.splide.Extensions);
+                }, window.splide.Extensions);
 
-                var believe = new Splide('#believe-slider', {
-                    type: 'loop',
+                initSplide('#believe-slider', {
+                    ...commonOptions,
                     perPage: 12,
-                    perMove: 1,
-                    drag: false,
-                    arrows: false,
-                    gap: '0',
-                    pagination: false,
-                    focus: 'center',
                     autoScroll: {
                         speed: 0.2,
-                        pauseOnHover: false,
+                        pauseOnHover: false
                     },
-                }).mount(window.splide.Extensions);
+                }, window.splide.Extensions);
 
-                var testi1 = new Splide('#testi1-slider', {
-                    type: 'loop',
+                initSplide('#testi1-slider', {
+                    ...commonOptions,
                     perPage: 5,
-                    perMove: 1,
-                    drag: false,
-                    arrows: false,
-                    gap: '0',
-                    pagination: false,
-                    focus: 'center',
                     autoScroll: {
                         speed: 0.2,
-                        pauseOnHover: false,
+                        pauseOnHover: false
                     },
-                }).mount(window.splide.Extensions);
+                }, window.splide.Extensions);
 
-                var testi2 = new Splide('#testi2-slider', {
-                    type: 'loop',
+                initSplide('#testi2-slider', {
+                    ...commonOptions,
                     perPage: 5,
-                    perMove: 1,
-                    drag: false,
-                    arrows: false,
-                    gap: '0',
-                    pagination: false,
-                    focus: 'center',
                     autoScroll: {
                         speed: -0.2,
-                        pauseOnHover: false,
+                        pauseOnHover: false
                     },
-                }).mount(window.splide.Extensions);
+                }, window.splide.Extensions);
 
-                new Splide('#popular-carousel', {
+                initSplide('#popular-carousel', {
                     type: 'loop',
                     perPage: 2,
                     perMove: 1,
@@ -78,13 +71,13 @@
                     autoplay: true,
                     breakpoints: {
                         992: {
-                            perPage: 2,
+                            perPage: 2
                         },
                         640: {
-                            perPage: 1,
+                            perPage: 1
                         },
-                    }
-                }).mount();
+                    },
+                });
             });
         </script>
     @endpush
@@ -725,7 +718,7 @@
                             Temukan produk dan jasa profesional
                             terbaik yang
                             sesuai dengan kebutuhanmu</p>
-                        <a href="#">
+                        <a href="{{ route('semua-produk') }}">
                             <x-border-button class="inline-flex gap-2 items-center">
                                 Belanja sekarang
                                 <svg class="size-5 fill-indigo-600" xmlns="http://www.w3.org/2000/svg" width="32"
@@ -740,12 +733,14 @@
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                @for ($i = 0; $i < 6; $i++)
-                    <x-product-card
-                        image="https://cdn.dribbble.com/userupload/16547122/file/original-517193b05b0305a27dfc2c4c8e235eaa.png?resize=1504x1128"
-                        title="Freelance Marketplace App" rating="4.8 (200)" price="250000" category="Aplikasi"
-                        categorySlug="aplikasi" slug="freelance-marketplace-app" />
-                @endfor
+                @foreach ($produk as $p)
+                    <livewire:home.components.product-card produkId="{{ $p->id }}"
+                        image="{{ asset($p->images->where('is_primary', true)->first()->image_path) }}"
+                        title="{{ htmlspecialchars($p->name) }}" rating="4.8 (200)" price="{{ $p->price }}"
+                        category="{{ $p->category ? $p->category->name : 'Kategori tidak tersedia' }}"
+                        categorySlug="{{ $p->category ? $p->category->slug : '' }}" slug="{{ $p->slug }}"
+                        lazy />
+                @endforeach
             </div>
         </div>
     </section>

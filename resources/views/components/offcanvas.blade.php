@@ -36,14 +36,14 @@
     </div>
 
     {{-- Backdrop --}}
-    <div x-cloak class="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm transition-opacity duration-300" x-show="open"
+    <div x-cloak class="fixed inset-0 z-50 bg-black/80 duration-300" x-show="open"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="open = false"></div>
 
     {{-- Offcanvas Panel --}}
     <div x-cloak x-show="open" x-trap.inert.noscroll="open"
-        class="fixed z-[201] {{ $dimensionClass }} {{ $positionClasses }} {{ $contentClasses }}"
+        class="fixed z-[51] {{ $dimensionClass }} {{ $positionClasses }} {{ $contentClasses }}"
         :class="{ '{{ $translateClass }}': !open }" x-transition:enter="transform transition ease-in-out duration-300"
         x-transition:enter-start="{{ $translateClass }}" x-transition:enter-end="translate-x-0 translate-y-0"
         x-transition:leave="transform transition ease-in-out duration-300"

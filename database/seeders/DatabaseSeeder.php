@@ -21,11 +21,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         \DB::unprepared(file_get_contents(database_path('seeders/wilayah_indonesia.sql')));
+        \DB::unprepared(file_get_contents(database_path('seeders/bank.sql')));
 
         User::factory()->create([
             'name' => 'farhan',
             'email' => 'farhan@gmail.com',
             'username' => 'farhan',
+            'slug' => 'farhan',
             'phone' => '08123456789',
             'password' => bcrypt('farhan'),
         ]);

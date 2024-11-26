@@ -7,6 +7,6 @@
             : 'inline-flex items-center py-2.5 px-3 rounded-xl font-medium leading-5 text-indigo-100 hover:text-white hover:bg-indigo-600 w-full focus:outline-none transition duration-150 ease-in-out';
 @endphp
 
-<a {{ $attributes->merge(['class' => $classes]) }} wire:navigate>
+<a {{ $attributes->merge(['class' => $classes]) }}>
     {{ $slot }}
 </a>

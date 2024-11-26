@@ -40,19 +40,27 @@ input[type="number"] {
 }
 
 .ql-container {
-    @apply !rounded-t-none
+    @apply !rounded-t-none;
 }
 
 .ql-toolbar {
-    @apply !rounded-b-none
+    @apply !rounded-b-none;
 }
 
 .ql-editor {
-    @apply min-h-52 
+    @apply min-h-52;
 }
 
 .ql-snow {
-    @apply !border-neutral-300 rounded-xl
+    @apply !border-neutral-300 rounded-xl;
+}
+
+#detail-produk .splide__arrow--prev {
+    @apply left-10 z-50;
+}
+
+#detail-produk .splide__arrow--next {
+    @apply right-10 z-50;
 }
 
 /* 

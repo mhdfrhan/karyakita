@@ -58,21 +58,21 @@
                     @endif
 
                     @if (request()->routeIs('dashboard'))
-                    <li class="max-w-7xl mx-auto px-5 lg:px-0 lg:mx-0 lg:max-w-max">
-                        <a href="{{ route('dashboard') }}"
-                            class="flex items-center justify-between {{ request()->routeIs('dashboard') ? 'text-indigo-500 font-medium' : 'text-neutral-500' }} py-2 hover:bg-neutral-300/30 hover:px-3 hover:lg:px-4 lg:px-4 duration-300 rounded-lg active:lg:scale-90">
-                            <div>
-                                Dashboard
-                            </div>
-                            <svg class="size-4 lg:hidden fill-neutral-500" xmlns="http://www.w3.org/2000/svg"
-                                width="32" height="32" fill="#000000" viewBox="0 0 256 256">
-                                <path
-                                    d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z">
-                                </path>
-                            </svg>
-                        </a>
-                    </li>
-                @endif
+                        <li class="max-w-7xl mx-auto px-5 lg:px-0 lg:mx-0 lg:max-w-max">
+                            <a href="{{ route('dashboard') }}"
+                                class="flex items-center justify-between {{ request()->routeIs('dashboard') ? 'text-indigo-500 font-medium' : 'text-neutral-500' }} py-2 hover:bg-neutral-300/30 hover:px-3 hover:lg:px-4 lg:px-4 duration-300 rounded-lg active:lg:scale-90">
+                                <div>
+                                    Dashboard
+                                </div>
+                                <svg class="size-4 lg:hidden fill-neutral-500" xmlns="http://www.w3.org/2000/svg"
+                                    width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                                    <path
+                                        d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z">
+                                    </path>
+                                </svg>
+                            </a>
+                        </li>
+                    @endif
 
                     <li
                         class="lg:px-0 lg:mx-0 lg:max-w-max mt-4 border-t border-neutral-200 pt-4 lg:border-0 lg:pt-0 lg:mt-0">
@@ -156,44 +156,10 @@
                         </div>
                     </div>
 
+                    <livewire:home.components.produk-favorit>
 
-                    <x-offcanvas position="right" width="96">
-                        <x-slot name="trigger">
-                            <button class="relative">
-                                <svg class="size-6 fill-neutral-500 hover:fill-indigo-500"
-                                    xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000"
-                                    viewBox="0 0 256 256">
-                                    <path
-                                        d="M104,216a16,16,0,1,1-16-16A16,16,0,0,1,104,216Zm88-16a16,16,0,1,0,16,16A16,16,0,0,0,192,200ZM239.71,74.14l-25.64,92.28A24.06,24.06,0,0,1,191,184H92.16A24.06,24.06,0,0,1,69,166.42L33.92,40H16a8,8,0,0,1,0-16H40a8,8,0,0,1,7.71,5.86L57.19,64H232a8,8,0,0,1,7.71,10.14ZM221.47,80H61.64l22.81,82.14A8,8,0,0,0,92.16,168H191a8,8,0,0,0,7.71-5.86Z">
-                                    </path>
-                                </svg>
-                                <div
-                                    class="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-indigo-500 text-[10px] text-white flex items-center justify-center">
-                                    0
-                                </div>
-                            </button>
-                        </x-slot>
+                        <livewire:home.components.keranjang>
 
-                        <x-slot name="content">
-                            <div class="p-4">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-lg font-semibold">Keranjang Belanja</h2>
-                                    <button @click="open = false"
-                                        class="text-neutral-800/60 hover:text-neutral-800 w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 duration-300">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div class="space-y-4">
-                                    <p>Konten panel di sini...</p>
-                                    {{-- Tambahkan konten lainnya di sini --}}
-                                </div>
-                            </div>
-                        </x-slot>
-                    </x-offcanvas>
                 </div>
                 <div class="flex items-center gap-4">
                     <a
@@ -328,48 +294,24 @@
         }">
         <div class="max-w-7xl mx-auto px-5">
             @php
-                $kategori = [
-                    'Desain Grafis',
-                    'Web & Aplikasi',
-                    'Jasa Profesional',
-                    'Konten Digital',
-                    'Pendidikan',
-                    'Produktivitas',
-                ];
+                $kategori = App\Models\Categories::all();
             @endphp
             <div class="overflow-x-auto">
                 <ul class="flex flex-nowrap min-w-max items-center gap-4 transition-transform duration-300"
                     :class="{ 'scale-100': isScrolled }">
                     {{-- kategori --}}
+                    @foreach ($kategori as $k)
+                        <li>
+                            <a href="{{ route('detailKategori', $k->slug) }}"
+                                class="text-sm transition-colors duration-200 text-neutral-500">
+                                <span>{{ $k->name }}</span>
+                            </a>
+                        </li>
+                    @endforeach
                     <li>
-                        <a href="" class="text-sm transition-colors duration-200 text-neutral-500">
-                            <span>Desain Grafis</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="text-sm transition-colors duration-200 text-neutral-500">
-                            <span>Web & Aplikasi</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('semua-jasa') }}"
-                            class="text-sm transition-colors duration-200 {{ request()->routeIs('semua-jasa') ? 'text-indigo-500 font-medium' : 'text-neutral-500' }}">
+                        <a href="{{ route('detailKategori', 'jasa-profesional') }}"
+                            class="text-sm transition-colors duration-200 text-neutral-500">
                             <span>Jasa Profesional</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="text-sm transition-colors duration-200 text-neutral-500">
-                            <span>Konten Digital</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="text-sm transition-colors duration-200 text-neutral-500">
-                            <span>Pendidikan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="text-sm transition-colors duration-200 text-neutral-500">
-                            <span>Produktivitas</span>
                         </a>
                     </li>
                 </ul>

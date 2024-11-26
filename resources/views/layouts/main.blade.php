@@ -32,11 +32,27 @@
     {{-- breadcrumb --}}
     @if (!request()->routeIs('home'))
         <div class="max-w-7xl mx-auto px-5 pt-6 pb-10">
-            <div class="inline-flex items-center gap-3">
-                <p><a href="{{ route('home') }}" class="hover:underline text-neutral-600">Home</a></p>
-                <p>/</p>
-                <p class="font-medium">{{ $title }}</p>
-            </div>
+            <nav aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-4">
+                    <li class="text-neutral-500 flex items-center">
+                        <a href="{{ url('/') }}"
+                            class="text-neutral-500 hover:text-neutral-900 capitalize">Home</a>
+                    </li>
+                    @foreach (request()->segments() as $index => $segment)
+                        <li class="text-neutral-500 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-4 h-4 mr-2">
+                                <rect width="256" height="256" fill="none" />
+                                <polyline points="96 48 176 128 96 208" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="22" />
+                            </svg>
+                            <a href="{{ url()->current() }}"
+                                class="{{ $loop->iteration == $loop->count ? 'text-black font-semibold' : 'text-neutral-500' }} hover:text-neutral-900 capitalize">
+                                {{ str_replace('-', ' ', $segment) }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ol>
+            </nav>
         </div>
     @endif
 

@@ -70,10 +70,16 @@ class Daftar extends Component
             return;
         }
 
+        if (Shops::where('name', $this->name)->exists()) {
+            $this->dispatch('notify', message: 'Nama toko sudah digunakan, silakan pilih nama lain.', type: 'error');
+            return;
+        }
+
         try {
             Shops::create([
                 'user_id' => Auth::id(),
                 'name' => $this->name,
+                'slug' => Str::slug($this->name),
                 'description' => $this->description,
                 'city' => $this->city,
                 'country' => $this->country,

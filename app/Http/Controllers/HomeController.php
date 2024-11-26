@@ -3,15 +3,61 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories;
+use App\Models\Products;
+use App\Models\ServiceCategories;
+use App\Models\ServiceCategoriesType;
 use App\Models\Shops;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+
     public function index()
     {
+        $produk = Products::with('sales')->select(['id', 'sub_category_id', 'name', 'price', 'slug'])->where('status', 'published')->where('admin_approved', true)->get();
+
+        $produkTerlaris = $produk->sortByDesc(function ($item) {
+            return $item->sales->sum('quantity');
+        })->values();
+
+
         return view('home.index', [
-            'title' => 'Home'
+            'title' => 'Home',
+            'produk' => $produkTerlaris,
+        ]);
+    }
+
+    public function detailProduk($slug)
+    {
+        $produk = Products::where('slug', $slug)->first();
+        if (!$produk) return redirect(route('home'));
+
+        // $produk->increment('views');
+
+        return view('home.produk.detail', [
+            'title' => 'Produk ' . $produk->name,
+            'produk' => $produk
+        ]);
+    }
+
+    public function detailKategori($slug)
+    {
+        if ($slug != 'jasa-profesional') {
+            $kategori = Categories::where('slug', $slug)->first();
+        } else {
+            $kategori = ServiceCategoriesType::all();
+        };
+        return view('home.kategori.detail', [
+            'title' => 'Kategori ' . ($slug != 'jasa-profesional' ? $kategori->name : 'Jasa Profesional'),
+        ]);
+    }
+
+    public function detailSubKategori($slug1, $slug2)
+    {
+        $subKategori = Categories::where('slug', $slug1)->first();
+        return view('home.kategori.sub-kategori.detail', [
+            'title' => $subKategori->name,
         ]);
     }
 
@@ -45,6 +91,17 @@ class HomeController extends Controller
 
         return view('home.daftar-toko', [
             'title' => 'Daftar Toko'
+        ]);
+    }
+
+    public function detailToko($slug)
+    {
+        $toko = Shops::where('slug', $slug)->first();
+        if (!$toko) return redirect(route('home'));
+
+        return view('home.toko.detail', [
+            'title' => 'Toko ' . $toko->name,
+            'toko' => $toko
         ]);
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_versions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('products_id')->constrained()->onDelete('cascade');
-            $table->float('version');
+            $table->integer('version');
             $table->string('file_path');
             $table->timestamps();
         });
