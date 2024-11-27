@@ -32,6 +32,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->timestamp('last_seen')->nullable();
+            $table->string('website')->nullable();
+            $table->string('instagram')->nullable();
+            $table->string('twitter')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

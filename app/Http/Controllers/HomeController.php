@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\Orders;
 use App\Models\Products;
+use App\Models\ProductTags;
 use App\Models\ServiceCategories;
 use App\Models\ServiceCategoriesType;
 use App\Models\Shops;
@@ -102,6 +104,55 @@ class HomeController extends Controller
         return view('home.toko.detail', [
             'title' => 'Toko ' . $toko->name,
             'toko' => $toko
+        ]);
+    }
+
+    public function detailTag($slug)
+    {
+        $tag = ProductTags::where('slug', $slug)->first();
+        return view('home.produk.tag.detail', [
+            'title' => 'Tag ' . $slug,
+        ]);
+    }
+
+    // public function checkoutProduk($invoicenumber)
+    // {
+    //     $order = Orders::where('invoice_number', $invoicenumber)->first();
+    //     if (!$order) return redirect(route('home'));
+
+    //     return view('home.produk.checkout', [
+    //         'title' => 'Checkout Produk ',
+    //     ]);
+    // }
+
+    public function checkoutProduk($invoicenumber)
+    {
+        // Ambil data order dari session
+        $tempOrder = session()->get('temp_order');
+        if (!session()->has('temp_order')) return redirect(route('home'));
+        // dd($tempOrder['items']);
+
+        return view('home.produk.checkout', [
+            'title' => 'Checkout Produk',
+            'order' => $tempOrder
+        ]);
+    }
+
+    public function paymentProduk($invoicenumber)
+    {
+        $order = Orders::where('invoice_number', $invoicenumber)->where('payment_status', 'pending')->first();
+        if (!$order) return redirect(route('home'));
+
+        return view('home.produk.payment', [
+            'title' => 'Pembayaran Produk ' . $invoicenumber,
+            'order' => $order
+        ]);
+    }
+
+    public function homeDashboard($username)
+    {
+        return view('home.dashboard.index', [
+            'title' => 'Dashboard'
         ]);
     }
 }

@@ -1,16 +1,21 @@
-<section class="bg-indigo-500 py-8">
-    <div class="lg:flex lg:flex-wrap lg:justify-between items-center max-w-7xl mx-auto px-5 gap-4">
-        <h1 class="max-w-3xl text-center lg:text-left text-white text-2xl sm:text-3xl font-medium">
-            Masih bingung tempat mencari jasa professional dan produk digital yang berkualitas? KaryaKita solusinya👌
-        </h1>
-        <div class="mt-6 lg:mt-0 text-center lg:text-right">
-            <a href=""
-                class="px-8 py-3 bg-white text-indigo-500 rounded-full font-medium shadow-lg shadow-white/30 hover:-translate-y-2 duration-300 inline-block">
-                Daftar Sekarang
-            </a>
-        </div>
-    </div>
-</section>
+@if (!auth()->check())
+    @if (!request()->routeIs('checkout') && !request()->routeIs('paymentProduk'))
+        <section class="bg-indigo-500 py-8">
+            <div class="lg:flex lg:flex-wrap lg:justify-between items-center max-w-7xl mx-auto px-5 gap-4">
+                <h1 class="max-w-3xl text-center lg:text-left text-white text-2xl sm:text-3xl font-medium">
+                    Masih bingung tempat mencari jasa professional dan produk digital yang berkualitas? KaryaKita
+                    solusinya👌
+                </h1>
+                <div class="mt-6 lg:mt-0 text-center lg:text-right">
+                    <a href=""
+                        class="px-8 py-3 bg-white text-indigo-500 rounded-full font-medium shadow-lg shadow-white/30 hover:-translate-y-2 duration-300 inline-block">
+                        Daftar Sekarang
+                    </a>
+                </div>
+            </div>
+        </section>
+    @endif
+@endif
 <footer class="w-full bg-neutral-900 pt-14">
     <div class="max-w-7xl mx-auto px-5">
         <div class="md:flex md:flex-wrap -mx-4 md:justify-between">
@@ -86,19 +91,24 @@
                         <h5 class="font-medium text-white mb-3">Halaman</h5>
                         <ul class="space-y-1.5">
                             <li>
-                                <a href="{{ route('home') }}" class="text-neutral-500 hover:text-indigo-400 duration-200">Beranda</a>
+                                <a href="{{ route('home') }}"
+                                    class="text-neutral-500 hover:text-indigo-400 duration-200">Beranda</a>
                             </li>
                             <li>
-                                <a href="{{ route('semua-produk') }}" class="text-neutral-500 hover:text-indigo-400 duration-200">Semua Produk</a>
+                                <a href="{{ route('semua-produk') }}"
+                                    class="text-neutral-500 hover:text-indigo-400 duration-200">Semua Produk</a>
                             </li>
                             <li>
-                                <a href="{{ route('semua-jasa') }}" class="text-neutral-500 hover:text-indigo-400 duration-200">Semua Jasa</a>
+                                <a href="{{ route('semua-jasa') }}"
+                                    class="text-neutral-500 hover:text-indigo-400 duration-200">Semua Jasa</a>
                             </li>
                             <li>
-                                <a href="{{ route('faq') }}" class="text-neutral-500 hover:text-indigo-400 duration-200">FAQ</a>
+                                <a href="{{ route('faq') }}"
+                                    class="text-neutral-500 hover:text-indigo-400 duration-200">FAQ</a>
                             </li>
                             <li>
-                                <a href="#" class="text-neutral-500 hover:text-indigo-400 duration-200">Artikel</a>
+                                <a href="#"
+                                    class="text-neutral-500 hover:text-indigo-400 duration-200">Artikel</a>
                             </li>
                             <li>
                                 <a href="#" class="text-neutral-500 hover:text-indigo-400 duration-200">Kontak</a>
@@ -110,7 +120,8 @@
                         <ul class="space-y-1.5">
                             @foreach ($kategori as $k)
                                 <li>
-                                    <a href="#" class="text-neutral-500 hover:text-indigo-400 duration-200">{{ $k }}</a>
+                                    <a href="#"
+                                        class="text-neutral-500 hover:text-indigo-400 duration-200">{{ $k }}</a>
                                 </li>
                             @endforeach
                         </ul>
@@ -120,7 +131,8 @@
                         <ul class="space-y-1.5">
                             @foreach ($kategori as $k)
                                 <li>
-                                    <a href="#" class="text-neutral-500 hover:text-indigo-400 duration-200">{{ $k }}</a>
+                                    <a href="#"
+                                        class="text-neutral-500 hover:text-indigo-400 duration-200">{{ $k }}</a>
                                 </li>
                             @endforeach
                         </ul>

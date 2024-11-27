@@ -17,12 +17,18 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/produk/{slug}', 'detailProduk')->name('detailProduk');
     Route::get('/kategori/{slug}', 'detailKategori')->name('detailKategori');
     Route::get('/kategori/{slug}/{slug2}', 'detailSubKategori')->name('detailSubKategori');
+    Route::get('/tag/{slug}', 'detailTag')->name('detailTag');
 
     // toko
     Route::get('/daftar-toko', 'daftarToko')->name('daftarToko');
 
     // user
     Route::get('/toko/{slug}', 'detailToko')->name('detailToko');
+    Route::get('/{username}/dashboard', 'homeDashboard')->name('home.dashboard');
+
+    // checkout produk
+    Route::get('/checkout/{invoicenumber}', 'checkoutProduk')->name('checkout');
+    Route::get('/checkout/{invoicenumber}/payment', 'paymentProduk')->name('paymentProduk');
 });
 
 Route::post('/upload', [UploadController::class, 'uploadFile'])->name('produk.upload');

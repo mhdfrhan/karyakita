@@ -82,10 +82,27 @@
             </div>
 
             <!-- Elemen di Bawah -->
-            <div class="mt-auto pt-4 border-t">
-                <button class="w-full bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600">
+            <div class="mt-auto pt-4">
+                <ul class="mb-4">
+                    <li class="flex items-center justify-between gap-2 border-b mb-3 pb-3">
+                        <span class="text-sm font-medium text-neutral-500">Subtotal</span>
+                        <span class="text-sm font-semibold text-neutral-600">Rp.
+                            {{ number_format(collect($keranjang)->sum('price'), 0, ',', '.') }}</span>
+                    </li>
+                    <li class="flex items-center justify-between gap-2 border-b mb-3 pb-3">
+                        <span class="text-sm font-medium text-neutral-500">Pajak (10%)</span>
+                        <span class="text-sm font-semibold text-neutral-600">Rp.
+                            {{ number_format(collect($keranjang)->sum('price') * 0.1, 0, ',', '.') }}</span>
+                    </li>
+                    <li class="flex items-center justify-between gap-2">
+                        <span class="text-sm font-semibold text-neutral-800">Total</span>
+                        <span class="text-sm font-semibold text-neutral-800">Rp.
+                            {{ number_format(collect($keranjang)->sum('price') * 1.1, 0, ',', '.') }}</span>
+                    </li>
+                </ul>
+                <x-primary-button class="w-full" wire:click="checkout">
                     Checkout
-                </button>
+                </x-primary-button>
             </div>
         </div>
     </x-slot>

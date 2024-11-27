@@ -47,6 +47,7 @@
     <x-slot name="title">{{ $title }}</x-slot>
 
     <section class="pb-10 lg:pb-20" id="detail-produk">
+        @include('components.alert')
         <div>
             <div class="max-w-7xl mx-auto px-5">
                 <div class="mb-10">
@@ -74,7 +75,7 @@
                         @foreach ($produk->images as $i => $image)
                             <li class="splide__slide px-2">
                                 <img src="{{ asset($image->image_path) }}" alt="Gambar {{ $i + 1 }}"
-                                    class="w-full rounded-2xl">
+                                    class="w-full rounded-2xl" loading="lazy">
                             </li>
                         @endforeach
                     </ul>
@@ -135,8 +136,8 @@
                 </div>
             </div>
             <div class="max-w-7xl mx-auto px-5 mt-10">
-                <div class="flex flex-wrap -mx-4">
-                    <div class="w-full lg:w-3/4 lg:px-4">
+                <div class="flex flex-wrap -mx-5 divide-x divide-neutral-200">
+                    <div class="w-full lg:w-3/4 lg:px-5">
                         <h2 class="text-xl font-semibold mb-4">Deskripsi</h2>
                         <div class="deskripsi-produk text-neutral-700 mb-8">
                             {!! $produk->description !!}
@@ -178,17 +179,84 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-full lg:w-1/4 lg:px-4">
+                    <div class="w-full lg:w-1/4 lg:px-5">
                         <div class="space-y-8">
                             <div>
                                 <h2 class="text-lg font-semibold mb-1">Kategori</h2>
                                 <a href="{{ route('detailKategori', $produk->category->slug) }}"
-                                    class="text-neutral-500 hover:text-indigo-500 duration-150">{{ $produk->category->name }}</a>
+                                    class="text-neutral-500/80 hover:text-indigo-500 duration-150">{{ $produk->category->name }}</a>
                             </div>
                             <div>
                                 <h2 class="text-lg font-semibold mb-1">Sub Kategori</h2>
                                 <a href="{{ route('detailSubKategori', [$produk->category->slug, $produk->subCategory->slug]) }}"
-                                    class="text-neutral-500 hover:text-indigo-500 duration-150">{{ $produk->subCategory->name }}</a>
+                                    class="text-neutral-500/80 hover:text-indigo-500 duration-150">{{ $produk->subCategory->name }}</a>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold mb-1">Harga</h2>
+                                <p class="text-neutral-500/80">
+                                    Rp. <span>{{ number_format($produk->price, 0, ',', '.') }}</span>
+                                    <span
+                                        class="line-through text-sm text-neutral-400">{{ number_format($produk->old_price, 0, ',', '.') }}</span>
+                                    <span>({{ round((($produk->old_price - $produk->price) / $produk->old_price) * 100) }}%)</span>
+                                </p>
+                            </div>
+                            <div>
+                                @php
+                                    $tagIds = explode(',', $produk->tags);
+                                    $produkTags = \App\Models\ProductTags::whereIn('id', $tagIds)
+                                        ->select(['name', 'slug'])
+                                        ->get();
+                                @endphp
+                                <h2 class="text-lg font-semibold mb-1">Tags</h2>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($produkTags as $tag)
+                                        <a href="{{ route('detailTag', $tag->slug) }}"
+                                            class="bg-neutral-200 text-center rounded-md inline-block px-4 py-1 text-neutral-500 hover:bg-indigo-500 duration-150 hover:text-white capitalize">
+                                            {{ $tag->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold mb-1">Bantuan</h2>
+                                <ul class="space-y-1">
+                                    <li>
+                                        <a href="mailto:{{ $produk->shop->user->email }}"
+                                            class="inline-flex items-center gap-3 text-neutral-500/80 hover:text-indigo-500 duration-150">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-5 shrink-0">
+                                                <path
+                                                    d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" />
+                                                <path
+                                                    d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
+                                            </svg>
+                                            Hubungi {{ $produk->shop->name }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href=""
+                                            class="inline-flex items-center gap-3 text-neutral-500/80 hover:text-indigo-500 duration-150">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-5 shrink-0">
+                                                <path fill-rule="evenodd"
+                                                    d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Gimana cara beli produk ini?
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href=""
+                                            class="inline-flex items-center gap-3 text-neutral-500/80 hover:text-red-500 duration-150">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-5">
+                                                <path
+                                                    d="M13.92 3.845a19.362 19.362 0 0 1-6.3 1.98C6.765 5.942 5.89 6 5 6a4 4 0 0 0-.504 7.969 15.97 15.97 0 0 0 1.271 3.34c.397.771 1.342 1 2.05.59l.867-.5c.726-.419.94-1.32.588-2.02-.166-.331-.315-.666-.448-1.004 1.8.357 3.511.963 5.096 1.78A17.964 17.964 0 0 0 15 10c0-2.162-.381-4.235-1.08-6.155ZM15.243 3.097A19.456 19.456 0 0 1 16.5 10c0 2.43-.445 4.758-1.257 6.904l-.03.077a.75.75 0 0 0 1.401.537 20.903 20.903 0 0 0 1.312-5.745 2 2 0 0 0 0-3.546 20.902 20.902 0 0 0-1.312-5.745.75.75 0 0 0-1.4.537l.029.078Z" />
+                                            </svg>
+                                            Laporkan produk ini
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -199,8 +267,7 @@
                 <div class="max-w-7xl mx-auto px-5">
                     <div class="flex items-center justify-between gap-3">
                         <div>
-                            <a href="{{ route('detailToko', $produk->shop->slug) }}"
-                                class="transition-opacity hover:opacity-60 flex items-center gap-3">
+                            <div class="flex items-center gap-3">
                                 <div>
                                     @if (optional($produk->shop->user)->profile_image)
                                         <img src="{{ asset($produk->shop->user->profile_image) }}"
@@ -217,24 +284,40 @@
                                     @endif
                                 </div>
                                 <div class="font-medium">
-                                    <p>{{ $produk->shop->name }}</p>
-                                    <span class="block text-sm text-neutral-400">{{ $produk->shop->country }}</span>
+                                    <div>
+                                        <p>{{ $produk->shop->name }}</p>
+                                    </div>
+                                    <div class="inline-flex items-center gap-2">
+                                        @if ($produk->shop->user->last_seen >= now()->subMinutes(2))
+                                            <div class="flex items-center gap-1">
+                                                <span class="relative flex h-3 w-3">
+                                                    <span
+                                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75"></span>
+                                                    <span
+                                                        class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                                </span>
+                                                <span class="block text-sm text-green-500">Online</span>
+                                            </div>
+                                        @else
+                                            <span class="block text-sm text-neutral-400">Terakhir online
+                                                {{ Carbon\Carbon::parse($produk->shop->user->last_seen)->diffForHumans() }}</span>
+                                        @endif
+                                        <span class="text-neutral-400">~</span>
+                                        <a href=""
+                                            class="inline-flex items-center gap-0.5 text-sm text-neutral-400 font-normal hover:underline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                                            </svg>
+                                            Chat toko
+                                        </a>
+                                    </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <x-border-button class="inline-flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                </svg>
-                                Tambah ke keranjang
-                            </x-border-button>
-                            <x-primary-button>
-                                Beli Rp. {{ number_format($produk->price, 0, ',', '.')  }}
-                            </x-primary-button>
-                        </div>
+                        <livewire:home.produk.keranjang-dan-beli :produk="$produk">
                     </div>
                 </div>
             </div>

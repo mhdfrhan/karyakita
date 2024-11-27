@@ -25,10 +25,6 @@ return new class extends Migration
             $table->text('address');
             $table->boolean('is_verified')->default(false);
             $table->string('ktp_image')->nullable();
-            $table->string('website')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('twitter')->nullable();
-            $table->string('email')->nullable();
             $table->enum('status', ['active', 'suspended', 'inactive'])->default('active');
             $table->timestamps();
         });

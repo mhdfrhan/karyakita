@@ -1,6 +1,7 @@
 <div>
     @include('components.alert')
     
+    kategori {{ $kategori }}
     @empty(!$produk->count())
         <div wire:loading.class="opacity-50"
             class="{{ $viewType === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' : '' }}">

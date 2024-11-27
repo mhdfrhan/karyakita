@@ -15,7 +15,7 @@ class SemuaFilter extends Component
         $this->dispatch('filterProduk', [
             'viewType' => $this->viewType,
             'sortOrder' => $this->sortOrder,
-            'kategori' => $this->kategori
+            'kategori' => (int)$this->kategori
         ]);
     }
 

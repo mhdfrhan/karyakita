@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Home\Components;
 
-use App\Models\OrderItems;
-use App\Models\Orders;
+use App\Models\CartItems;
+use App\Models\Carts;
 use App\Models\ProductFavorites;
 use App\Models\Products;
 use Illuminate\Support\Facades\Auth;
@@ -75,23 +75,21 @@ class ProductCard extends Component
             return;
         }
 
-        $existingCart = Orders::where('user_id', Auth::user()->id)
-            ->where('payment_status', 'pending')
+        $existingCart = Carts::where('user_id', Auth::user()->id)
             ->first();
 
         if ($existingCart) {
-            $existingCartItem = OrderItems::where('order_id', $existingCart->id)
+            $existingCartItem = CartItems::where('carts_id', $existingCart->id)
                 ->where('products_id', $produk->id)
                 ->first();
-
             if ($existingCartItem) {
                 $existingCartItem->update([
                     'quantity' => $existingCartItem->quantity + 1,
-                    'price' => $produk->price * ($existingCartItem->quantity + 1)
+                    'total_amount' => $produk->price * ($existingCartItem->quantity + 1)
                 ]);
 
                 $existingCart->update([
-                    'total_amount' => OrderItems::where('order_id', $existingCart->id)
+                    'total_amount' => CartItems::where('carts_id', $existingCart->id)
                         ->sum('price')
                 ]);
 
@@ -100,8 +98,8 @@ class ProductCard extends Component
                 return;
             }
 
-            OrderItems::create([
-                'order_id' => $existingCart->id,
+            CartItems::create([
+                'carts_id' => $existingCart->id,
                 'products_id' => $produk->id,
                 'quantity' => 1,
                 'price' => $produk->price,
@@ -109,19 +107,18 @@ class ProductCard extends Component
             ]);
 
             $existingCart->update([
-                'total_amount' => OrderItems::where('order_id', $existingCart->id)
+                'total_amount' => CartItems::where('carts_id', $existingCart->id)
                     ->sum('price')
             ]);
         } else {
-            $cart = Orders::create([
+            $cart = Carts::create([
                 'user_id' => Auth::user()->id,
                 'total_amount' => $produk->price,
-                'payment_status' => 'pending',
                 'created_at' => now()
             ]);
 
-            OrderItems::create([
-                'order_id' => $cart->id,
+            CartItems::create([
+                'carts_id' => $cart->id,
                 'products_id' => $produk->id,
                 'quantity' => 1,
                 'price' => $produk->price,

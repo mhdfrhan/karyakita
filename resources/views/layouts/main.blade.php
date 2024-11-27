@@ -62,6 +62,7 @@
     </main>
 
 
+
     {{-- @include('home.partials.footer') --}}
 
     @stack('scripts')

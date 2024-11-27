@@ -227,7 +227,7 @@
                             </div>
                             <div>
                                 @if (auth()->check())
-                                    <x-dropdown-link :href="route('login')" class="inline-flex items-center gap-3">
+                                    <x-dropdown-link :href="route('home.dashboard', auth()->user()->username)" class="inline-flex items-center gap-3">
                                         <svg class="size-5 fill-neutral-500" xmlns="http://www.w3.org/2000/svg"
                                             width="32" height="32" fill="#000000" viewBox="0 0 256 256">
                                             <path
